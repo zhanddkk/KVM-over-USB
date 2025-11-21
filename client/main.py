@@ -47,7 +47,7 @@ from PySide6.QtMultimedia import (
     QMediaFormat,
     QMediaRecorder,
     QVideoFrame,
-    QVideoSink,
+    QVideoSink, QAudio, QAudioDevice, QAudioSource, QAudioOutput, QAudioFormat, QAudioSink,
 )
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
@@ -254,6 +254,61 @@ class KeyboardCodeData:
         return status, hid_code
 
 
+class AudioSession(QObject):
+    def __init__(self, parent: QObject | None = None):
+        super().__init__(parent)
+        # 获取设备的推荐格式
+        devices = QMediaDevices.audioInputs()
+        o_devices = QMediaDevices.audioOutputs()
+        # print(devices)
+        for device in devices:
+            print(device.description())
+            pass
+
+        # print(o_devices)
+        for device in o_devices:
+            print(device.description())
+            pass
+        audio_device = devices[0]
+        in_format = audio_device.preferredFormat()
+
+        # 音频输入（采集卡）
+        self.audio_source = QAudioSource(audio_device, in_format)
+        # self.input = self.audio_source.start()
+
+        # 音频输出（扬声器）
+        output_device = QMediaDevices.defaultAudioOutput()
+        # 验证输出设备是否支持输入格式；若不支持可降级到输出设备的推荐格式
+        out_format: QAudioFormat = in_format
+        if not output_device.isFormatSupported(in_format):
+            out_format = output_device.preferredFormat()
+
+        # 构建音频源（采集卡）和音频汇（扬声器）
+        # self.source = QAudioSource(input_device, in_format)
+        # 减小内部缓冲延迟（可根据需要调整）
+        self.audio_source.setBufferSize(4096 * 1024)
+
+        self.sink = QAudioSink(output_device, out_format)
+        # 提高抗抖动的缓冲（可根据需要调整）
+        self.sink.setBufferSize(8192 * 1024)
+
+        # 启动设备，获取 I/O 端口
+        self.in_dev = self.audio_source.start()   # QIODevice（可读）
+        self.out_dev = self.sink.start()    # QIODevice（可写）
+
+        # 两种拉取策略：readyRead 事件 或 定时器轮询
+        # 1) 事件驱动（低延迟）
+        self.in_dev.readyRead.connect(self.relay)
+
+        # 把输入的数据写到输出
+        self.in_dev.readyRead.connect(self.relay)
+
+    def relay(self):
+        data = self.in_dev.readAll()
+        self.out_dev.write(data)
+        pass
+    pass
+
 class VideoSession(QObject):
     def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
@@ -265,10 +320,13 @@ class VideoSession(QObject):
         self.image_capture: QImageCapture | None = None
         self.video_record: QMediaRecorder | None = None
 
+        self._audio = AudioSession(self)
+
     # 按照视频设备描述返回设备对象
     @staticmethod
     def get_video_device(device_description: str) -> QCameraDevice | None:
         cameras: list[QCameraDevice] = QMediaDevices.videoInputs()
+        audios: list[QAudioDevice] = QMediaDevices.audioInputs()
         video_device: QCameraDevice | None = None
         for camera in cameras:
             if camera.description() == device_description:
@@ -1760,10 +1818,11 @@ class AppMainWindow(MainWindow):
 
     # 滚轮事件
     def mouse_report_scroll(self):
-        if self.status.is_enabled("relative_mode"):
-            command = "mouse_relative_write"
-        else:
-            command = "mouse_absolute_write"
+        # if self.status.is_enabled("relative_mode"):
+        #     command = "mouse_relative_write"
+        # else:
+        #     command = "mouse_absolute_write"
+        command = "mouse_relative_write"
         self.controller_command_send(command, self.mouse_buffer.dup())
         self.mouse_buffer.wheel = MouseWheelStateEnum.STOP
 
@@ -2210,10 +2269,11 @@ class AppMainWindow(MainWindow):
         button_code = self.convert_to_button_code(event.button())
         button_state = MouseButtonStateEnum.PRESS
         self.mouse_buffer.set_button(button_code, button_state)
-        if self.status.is_enabled("relative_mode"):
-            command = "mouse_relative_write"
-        else:
-            command = "mouse_absolute_write"
+        # if self.status.is_enabled("relative_mode"):
+        #     command = "mouse_relative_write"
+        # else:
+        #     command = "mouse_absolute_write"
+        command = "mouse_relative_write"
         if self.status.is_enabled("relative_mode"):
             self.mouse_buffer.clear_point()
         if project_var.debug_mode:
@@ -2230,10 +2290,11 @@ class AppMainWindow(MainWindow):
             return
         button_code = self.convert_to_button_code(event.button())
         button_state = MouseButtonStateEnum.RELEASE
-        if self.status.is_enabled("relative_mode"):
-            command = "mouse_relative_write"
-        else:
-            command = "mouse_absolute_write"
+        # if self.status.is_enabled("relative_mode"):
+        #     command = "mouse_relative_write"
+        # else:
+        #     command = "mouse_absolute_write"
+        command = "mouse_relative_write"
         self.mouse_buffer.set_button(button_code, button_state)
         if self.status.is_enabled("relative_mode"):
             self.mouse_buffer.clear_point()

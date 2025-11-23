@@ -23,7 +23,7 @@ from PySide6.QtCore import (
     QTimer,
     QTranslator,
     QUrl,
-    Signal,
+    Signal, QIODevice,
 )
 from PySide6.QtGui import (
     QCloseEvent,
@@ -36,7 +36,7 @@ from PySide6.QtGui import (
     QMouseEvent,
     QPixmap,
     QSurfaceFormat,
-    QWheelEvent,
+    QWheelEvent, QPainter, QColor,
 )
 from PySide6.QtMultimedia import (
     QCamera,
@@ -257,55 +257,39 @@ class KeyboardCodeData:
 class AudioSession(QObject):
     def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
-        # 获取设备的推荐格式
-        devices = QMediaDevices.audioInputs()
-        o_devices = QMediaDevices.audioOutputs()
-        # print(devices)
-        for device in devices:
-            print(device.description())
-            pass
-
-        # print(o_devices)
-        for device in o_devices:
-            print(device.description())
-            pass
-        audio_device = devices[0]
-        in_format = audio_device.preferredFormat()
-
-        # 音频输入（采集卡）
-        self.audio_source = QAudioSource(audio_device, in_format)
-        # self.input = self.audio_source.start()
-
-        # 音频输出（扬声器）
-        output_device = QMediaDevices.defaultAudioOutput()
-        # 验证输出设备是否支持输入格式；若不支持可降级到输出设备的推荐格式
-        out_format: QAudioFormat = in_format
-        if not output_device.isFormatSupported(in_format):
-            out_format = output_device.preferredFormat()
-
-        # 构建音频源（采集卡）和音频汇（扬声器）
-        # self.source = QAudioSource(input_device, in_format)
-        # 减小内部缓冲延迟（可根据需要调整）
-        self.audio_source.setBufferSize(4096 * 1024)
-
-        self.sink = QAudioSink(output_device, out_format)
-        # 提高抗抖动的缓冲（可根据需要调整）
-        self.sink.setBufferSize(8192 * 1024)
-
-        # 启动设备，获取 I/O 端口
-        self.in_dev = self.audio_source.start()   # QIODevice（可读）
-        self.out_dev = self.sink.start()    # QIODevice（可写）
-
-        # 两种拉取策略：readyRead 事件 或 定时器轮询
-        # 1) 事件驱动（低延迟）
-        self.in_dev.readyRead.connect(self.relay)
-
-        # 把输入的数据写到输出
-        self.in_dev.readyRead.connect(self.relay)
+        self.audio_device_out = QMediaDevices.defaultAudioOutput()
+        self.io_device_out: QIODevice | None = None
+        self.audio_device_in: QAudioDevice | None = None
+        self.audio_source: QAudioSource | None = None
+        self.io_device_in: QIODevice | None = None
+        pass
 
     def relay(self):
-        data = self.in_dev.readAll()
-        self.out_dev.write(data)
+        self.io_device_out.write(self.io_device_in.readAll())
+        pass
+
+    # 按照视频设备描述返回设备对象
+    @staticmethod
+    def get_audio_in_device(device_description: str) -> QCameraDevice | None:
+        audios: list[QAudioDevice] = QMediaDevices.audioInputs()
+        audio_device: QAudioDevice | None = None
+        for audio in audios:
+            if audio.description() == device_description:
+                audio_device = audio
+                break
+        return audio_device
+
+    # 根据配置初始化视频设备
+    def init_audio_device_with_config(
+        self, config: dict[str, typing.Any]
+    ) -> None:
+        # 获得设备名
+        device_in_description = config["device_in"]
+        if device_in_description == "":
+            raise RuntimeError(self.tr("Target audio input device is empty."))
+        self.audio_device_in = self.get_audio_in_device(device_in_description)
+        if self.audio_device_in is None:
+            raise RuntimeError(self.tr("Target audio input device not found."))
         pass
     pass
 
@@ -320,13 +304,10 @@ class VideoSession(QObject):
         self.image_capture: QImageCapture | None = None
         self.video_record: QMediaRecorder | None = None
 
-        self._audio = AudioSession(self)
-
     # 按照视频设备描述返回设备对象
     @staticmethod
     def get_video_device(device_description: str) -> QCameraDevice | None:
         cameras: list[QCameraDevice] = QMediaDevices.videoInputs()
-        audios: list[QAudioDevice] = QMediaDevices.audioInputs()
         video_device: QCameraDevice | None = None
         for camera in cameras:
             if camera.description() == device_description:
@@ -558,6 +539,7 @@ class AppMainWindow(MainWindow):
                 "screen_height": 0,
                 "screen_width": 0,
                 "camera": False,
+                "audio": False,
                 "video_recording": False,
                 "controller": False,
                 "fullscreen": False,
@@ -634,6 +616,9 @@ class AppMainWindow(MainWindow):
         # 初始化 video session 相关变量
         self.video_session: VideoSession = VideoSession()
 
+        # 初始化 audio session 相关变量
+        self.audio_session: AudioSession = AudioSession()
+
         # 初始化键盘以及鼠标数据的缓冲buffer
         self.keyboard_key_buffer: KeyboardKeyBuffer | None = None
         self.keyboard_indicator_buffer: KeyboardIndicatorBuffer | None = None
@@ -691,6 +676,24 @@ class AppMainWindow(MainWindow):
         # 启动自动连接
         self.auto_connect_on_startup()
 
+    def change_icon_color(self, file_name: str, color: QColor) -> QIcon:
+        # 加载原始图标
+        pixmap = QPixmap(file_name)
+
+        # 创建一个同尺寸的透明图层
+        colored = QPixmap(pixmap.size())
+        colored.fill(Qt.GlobalColor.transparent)
+
+        # 用指定颜色绘制蒙版
+        painter = QPainter(colored)
+        painter.drawPixmap(0, 0, pixmap)  # 原图
+        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceIn)
+        painter.fillRect(colored.rect(), color)  # 修改为红色
+        painter.end()
+
+        icon = QIcon(colored)
+        return icon
+
     def load_icon(self, file_name: str) -> QIcon:
         search_path = [
             f"{self.source_directory}/icons/simple_style/{file_name}",
@@ -702,7 +705,7 @@ class AppMainWindow(MainWindow):
                 file_path = path
                 break
         assert file_path is not None
-        return QIcon(file_path)
+        return self.change_icon_color(file_path, QColor.fromRgb(196, 0, 240))
 
     def load_pixmap(self, file_name: str) -> QPixmap:
         search_path = [
@@ -1003,11 +1006,13 @@ class AppMainWindow(MainWindow):
     def connect_devices(self):
         self.connect_video_device()
         self.connect_controller()
+        self.connect_audio_device()
 
     # 断开设备
     def disconnect_devices(self):
         self.disconnect_video_device()
         self.disconnect_controller()
+        self.disconnect_audio_device()
 
     # 重载设备
     def reload_devices(self):
@@ -2075,6 +2080,48 @@ class AppMainWindow(MainWindow):
         self.set_video_widget_enable(False)
         self.setWindowTitle(self.WINDOW_TITLE)
 
+    def init_audio_device(self) -> bool:
+        status: bool = False
+        try:
+            # 使用配置初始化设备
+            self.audio_session.init_audio_device_with_config(self.config.audio)
+
+            if self.audio_session.audio_device_out.isNull():
+                self.status.set_bool("audio", False)
+                raise RuntimeError(self.tr("Audio output device start failed"))
+            else:
+                self.status.set_bool("audio", True)
+            self.audio_session.audio_source = QAudioSource(self.audio_session.audio_device_in)
+            self.audio_session.audio_source.setBufferSize(4096 * 1024)
+            in_format = self.audio_session.audio_source.format()
+            if not self.audio_session.audio_device_out.isFormatSupported(in_format):
+                raise RuntimeError(self.tr("Audio input device format is unsupported by audio output device"))
+
+            self.audio_session.sink = QAudioSink(self.audio_session.audio_device_out, self.audio_session.audio_source.format())
+            self.audio_session.sink.setBufferSize(8192 * 1024)
+            self.audio_session.io_device_out = self.audio_session.sink.start()
+            self.audio_session.io_device_in = self.audio_session.audio_source.start()
+            self.audio_session.io_device_in.readyRead.connect(self.audio_session.relay)
+            status = True
+        except RuntimeError as error:
+            error_message = str(error)
+            QMessageBox.critical(
+                self,
+                self.tr("Audio initialization error"),
+                error_message,
+                QMessageBox.StandardButton.Ok,
+                QMessageBox.StandardButton.NoButton,
+            )
+        return status
+
+    def connect_audio_device(self) -> None:
+        self.init_audio_device()
+        pass
+
+    def disconnect_audio_device(self) -> None:
+        self.audio_session.audio_source.stop()
+        pass
+
     ######################################################################
     # Hook
     ######################################################################
@@ -2146,6 +2193,7 @@ class AppMainWindow(MainWindow):
     def execute_settings_dialog(self) -> None:
         # 从配置文件读取配置
         video_config: dict[str, typing.Any] = copy.copy(self.config.video)
+        audio_config: dict[str, typing.Any] = copy.copy(self.config.audio)
         controller_config: dict[str, typing.Any] = copy.copy(
             self.config.controller
         )
@@ -2155,6 +2203,7 @@ class AppMainWindow(MainWindow):
 
         # 传入配置文件的配置
         self.settings_dialog.set_video_config(video_config)
+        self.settings_dialog.set_audio_config(audio_config)
         self.settings_dialog.set_controller_config(controller_config)
         self.settings_dialog.set_connection_config(connection_config)
 
@@ -2169,21 +2218,31 @@ class AppMainWindow(MainWindow):
             try:
                 # 获取用户选择的配置
                 video_config = self.settings_dialog.get_video_config()
+                audio_config = self.settings_dialog.get_audio_config()
                 controller_config = self.settings_dialog.get_controller_config()
                 connection_config = self.settings_dialog.get_connection_config()
                 # 检查选项是否有效
                 if video_config["device"] == "":
-                    raise ValueError("Invalid device")
+                    raise ValueError("video")
+                if audio_config["device_in"] == "":
+                    raise ValueError("audio")
                 # 与配置文件合并
                 self.config.video.update(video_config)
+                self.config.audio.update(audio_config)
                 self.config.controller.update(controller_config)
                 self.config.connection.update(connection_config)
                 # 保存配置
                 self.save_config()
-            except ValueError:
+            except ValueError as _e:
+                if _e.args[0] == "audio":
+                    _title = self.tr("Audio Error")
+                    pass
+                else:
+                    _title = self.tr("Video Error")
+                    pass
                 QMessageBox.critical(
                     self,
-                    self.tr("Video Error"),
+                    _title,
                     self.tr("Invalid device selected"),
                     QMessageBox.StandardButton.Ok,
                     QMessageBox.StandardButton.NoButton,

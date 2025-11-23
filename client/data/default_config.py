@@ -56,6 +56,8 @@ video_record:
   encoding_mode: ConstantQualityEncoding
   frame_rate: 0
   quality: HighQuality
+audio:
+  device_in: mic
 """
 MAIN_DEFAULT_CONFIG_DATA = MAIN_DEFAULT_CONFIG_DATA.strip()
 

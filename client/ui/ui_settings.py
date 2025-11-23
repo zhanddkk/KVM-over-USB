@@ -31,6 +31,15 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
         return devices
 
     @staticmethod
+    def list_audio_in_devices_name() -> list[str]:
+        devices = list()
+        in_audios = QMediaDevices.audioInputs()
+        for in_audio in in_audios:
+            devices.append(in_audio.description())
+            pass
+        return devices
+
+    @staticmethod
     def list_video_device_info(device_name: str) -> tuple[list[str], list[str]]:
         resolution_list = list()
         format_list = list()
@@ -66,6 +75,7 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
         )
 
         self.video_config: dict[str, typing.Any] = dict()
+        self.audio_config: dict[str, typing.Any] = dict()
         self.controller_config: dict[str, typing.Any] = dict()
         self.connection_config: dict[str, typing.Any] = dict()
         self.accept_settings: bool = False
@@ -107,6 +117,16 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
     # 设置视频配置
     def set_video_config(self, config: dict[str, typing.Any]) -> None:
         self.video_config = config
+
+    # 获取音频配置
+    def get_audio_config(self) -> dict[str, typing.Any]:
+        ac: dict[str, typing.Any] = dict()
+        ac["device_in"] = self.combo_box_audio_in_device.currentText()
+        return ac
+
+    # 设置音频配置
+    def set_audio_config(self, config: dict[str, typing.Any]) -> None:
+        self.audio_config = config
 
     # 获取控制器配置
     def get_controller_config(self) -> dict[str, typing.Any]:
@@ -163,6 +183,15 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
             self.combo_box_format, config_format
         )
 
+    def refresh_audio_devices_with_config(self) -> None:
+        config_device_in = self.audio_config["device_in"]
+        if config_device_in:
+            self.select_combo_box_preset_as_current_text(
+                self.combo_box_audio_in_device, config_device_in
+            )
+            pass
+        pass
+
     # 刷新控制器界面为运行时配置
     def refresh_controller_devices_with_config(self) -> None:
         config_type = self.controller_config["type"]
@@ -187,6 +216,7 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
     # 刷新界面为运行时配置
     def refresh_with_config(self) -> None:
         self.refresh_video_devices_with_config()
+        self.refresh_audio_devices_with_config()
         self.refresh_controller_devices_with_config()
         self.refresh_connection_with_config()
 
@@ -210,6 +240,19 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
         if video_device_name is not None:
             self.combo_box_device.setCurrentText(video_device_name)
             self.refresh_video_device_info(video_device_name)
+
+    # 刷新音频设备列表
+    def refresh_audio_in_devices(self):
+        self.combo_box_audio_in_device.clear()
+        audio_in_devices = self.list_audio_in_devices_name()
+        audio_in_device_name = None
+        for device in audio_in_devices:
+            self.combo_box_audio_in_device.addItem(device)
+            audio_in_device_name = device
+        if audio_in_device_name is not None:
+            self.combo_box_audio_in_device.setCurrentText(audio_in_device_name)
+            pass
+        pass
 
     # 刷新视频设备详细信息
     def refresh_video_device_info(self, device_name: str):
@@ -247,6 +290,7 @@ class SettingsDialog(QDialog, settings_ui.Ui_SettingsDialog):
     def refresh_devices(self):
         self.refresh_video_devices()
         self.refresh_serial_devices()
+        self.refresh_audio_in_devices()
 
 
 if __name__ == "__main__":

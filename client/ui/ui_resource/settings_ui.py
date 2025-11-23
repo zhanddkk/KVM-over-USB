@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
     QDialog, QDialogButtonBox, QGridLayout, QLabel,
-    QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
+    QSizePolicy, QSpacerItem, QTabWidget, QVBoxLayout,
+    QWidget)
 
 class Ui_SettingsDialog(object):
     def setupUi(self, SettingsDialog):
@@ -32,27 +33,6 @@ class Ui_SettingsDialog(object):
         self.tab_video.setObjectName(u"tab_video")
         self.gridLayout = QGridLayout(self.tab_video)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.label_device = QLabel(self.tab_video)
-        self.label_device.setObjectName(u"label_device")
-
-        self.gridLayout.addWidget(self.label_device, 0, 0, 1, 1)
-
-        self.label_format = QLabel(self.tab_video)
-        self.label_format.setObjectName(u"label_format")
-
-        self.gridLayout.addWidget(self.label_format, 2, 0, 1, 1)
-
-        self.combo_box_resolution = QComboBox(self.tab_video)
-        self.combo_box_resolution.setObjectName(u"combo_box_resolution")
-
-        self.gridLayout.addWidget(self.combo_box_resolution, 1, 1, 1, 1)
-
-        self.combo_box_device = QComboBox(self.tab_video)
-        self.combo_box_device.setObjectName(u"combo_box_device")
-        self.combo_box_device.setMouseTracking(False)
-
-        self.gridLayout.addWidget(self.combo_box_device, 0, 1, 1, 1)
-
         self.label_resolution = QLabel(self.tab_video)
         self.label_resolution.setObjectName(u"label_resolution")
 
@@ -63,15 +43,66 @@ class Ui_SettingsDialog(object):
 
         self.gridLayout.addWidget(self.combo_box_format, 2, 1, 1, 1)
 
+        self.label_device = QLabel(self.tab_video)
+        self.label_device.setObjectName(u"label_device")
+
+        self.gridLayout.addWidget(self.label_device, 0, 0, 1, 1)
+
+        self.combo_box_device = QComboBox(self.tab_video)
+        self.combo_box_device.setObjectName(u"combo_box_device")
+        self.combo_box_device.setMouseTracking(False)
+
+        self.gridLayout.addWidget(self.combo_box_device, 0, 1, 1, 1)
+
+        self.combo_box_resolution = QComboBox(self.tab_video)
+        self.combo_box_resolution.setObjectName(u"combo_box_resolution")
+
+        self.gridLayout.addWidget(self.combo_box_resolution, 1, 1, 1, 1)
+
+        self.label_format = QLabel(self.tab_video)
+        self.label_format.setObjectName(u"label_format")
+
+        self.gridLayout.addWidget(self.label_format, 2, 0, 1, 1)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer_2, 3, 0, 1, 1)
+
         self.tabWidget.addTab(self.tab_video, "")
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.gridLayout_3 = QGridLayout(self.tab)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.label = QLabel(self.tab)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
+
+        self.combo_box_audio_in_device = QComboBox(self.tab)
+        self.combo_box_audio_in_device.setObjectName(u"combo_box_audio_in_device")
+
+        self.gridLayout_3.addWidget(self.combo_box_audio_in_device, 0, 1, 1, 1)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_3.addItem(self.verticalSpacer, 1, 0, 1, 1)
+
+        self.tabWidget.addTab(self.tab, "")
         self.tab_controller = QWidget()
         self.tab_controller.setObjectName(u"tab_controller")
         self.gridLayout_2 = QGridLayout(self.tab_controller)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label_controller_type = QLabel(self.tab_controller)
-        self.label_controller_type.setObjectName(u"label_controller_type")
+        self.combo_box_com_port = QComboBox(self.tab_controller)
+        self.combo_box_com_port.addItem("")
+        self.combo_box_com_port.setObjectName(u"combo_box_com_port")
+        self.combo_box_com_port.setEditable(True)
 
-        self.gridLayout_2.addWidget(self.label_controller_type, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.combo_box_com_port, 1, 1, 1, 1)
+
+        self.label_baud_rate = QLabel(self.tab_controller)
+        self.label_baud_rate.setObjectName(u"label_baud_rate")
+
+        self.gridLayout_2.addWidget(self.label_baud_rate, 2, 0, 1, 1)
 
         self.combo_box_controller_type = QComboBox(self.tab_controller)
         self.combo_box_controller_type.addItem(u"ch9329")
@@ -84,18 +115,6 @@ class Ui_SettingsDialog(object):
         self.label_com_port.setObjectName(u"label_com_port")
 
         self.gridLayout_2.addWidget(self.label_com_port, 1, 0, 1, 1)
-
-        self.combo_box_com_port = QComboBox(self.tab_controller)
-        self.combo_box_com_port.addItem("")
-        self.combo_box_com_port.setObjectName(u"combo_box_com_port")
-        self.combo_box_com_port.setEditable(True)
-
-        self.gridLayout_2.addWidget(self.combo_box_com_port, 1, 1, 1, 1)
-
-        self.label_baud_rate = QLabel(self.tab_controller)
-        self.label_baud_rate.setObjectName(u"label_baud_rate")
-
-        self.gridLayout_2.addWidget(self.label_baud_rate, 2, 0, 1, 1)
 
         self.combo_box_baud_rate = QComboBox(self.tab_controller)
         self.combo_box_baud_rate.addItem(u"9600")
@@ -110,6 +129,15 @@ class Ui_SettingsDialog(object):
 
         self.gridLayout_2.addWidget(self.combo_box_baud_rate, 2, 1, 1, 1)
 
+        self.label_controller_type = QLabel(self.tab_controller)
+        self.label_controller_type.setObjectName(u"label_controller_type")
+
+        self.gridLayout_2.addWidget(self.label_controller_type, 0, 0, 1, 1)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_2.addItem(self.verticalSpacer_3, 3, 0, 1, 1)
+
         self.tabWidget.addTab(self.tab_controller, "")
         self.tab_connection = QWidget()
         self.tab_connection.setObjectName(u"tab_connection")
@@ -119,6 +147,10 @@ class Ui_SettingsDialog(object):
         self.check_box_auto_connect.setObjectName(u"check_box_auto_connect")
 
         self.verticalLayout_2.addWidget(self.check_box_auto_connect)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer_4)
 
         self.tabWidget.addTab(self.tab_connection, "")
 
@@ -145,17 +177,19 @@ class Ui_SettingsDialog(object):
 
     def retranslateUi(self, SettingsDialog):
         SettingsDialog.setWindowTitle(QCoreApplication.translate("SettingsDialog", u"Settings", None))
+        self.label_resolution.setText(QCoreApplication.translate("SettingsDialog", u"Resolution", None))
         self.label_device.setText(QCoreApplication.translate("SettingsDialog", u"Device", None))
         self.label_format.setText(QCoreApplication.translate("SettingsDialog", u"Format", None))
-        self.label_resolution.setText(QCoreApplication.translate("SettingsDialog", u"Resolution", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_video), QCoreApplication.translate("SettingsDialog", u"Video", None))
-        self.label_controller_type.setText(QCoreApplication.translate("SettingsDialog", u"Controller type", None))
-
-        self.label_com_port.setText(QCoreApplication.translate("SettingsDialog", u"COM port :", None))
+        self.label.setText(QCoreApplication.translate("SettingsDialog", u"Input Device", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("SettingsDialog", u"Audio", None))
         self.combo_box_com_port.setItemText(0, QCoreApplication.translate("SettingsDialog", u"auto", None))
 
         self.label_baud_rate.setText(QCoreApplication.translate("SettingsDialog", u"Baud rate:", None))
 
+        self.label_com_port.setText(QCoreApplication.translate("SettingsDialog", u"COM port :", None))
+
+        self.label_controller_type.setText(QCoreApplication.translate("SettingsDialog", u"Controller type", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_controller), QCoreApplication.translate("SettingsDialog", u"Controller", None))
         self.check_box_auto_connect.setText(QCoreApplication.translate("SettingsDialog", u"Auto Connect", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_connection), QCoreApplication.translate("SettingsDialog", u"Connection", None))

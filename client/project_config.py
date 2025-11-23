@@ -46,6 +46,7 @@ class MainConfig(RequiredConfig):
         self.shortcut_keys: dict | None = None
         self.ui: dict | None = None
         self.video: dict | None = None
+        self.audio: dict | None = None
         self.video_record: dict | None = None
         if file_path is not None:
             self.load_from_file()
@@ -61,6 +62,7 @@ class MainConfig(RequiredConfig):
         self.ui = self.root.get("ui", None)
         self.video = self.root.get("video", None)
         self.video_record = self.root.get("video_record", None)
+        self.audio = self.root.get("audio", None)
 
     def load_from_file(self) -> None:
         if not os.path.exists(self.file_path):

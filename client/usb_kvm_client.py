@@ -9,11 +9,11 @@ def write_message(path: str, message: str):
         f.write(f"{message}\n")
 
 
-if __name__ == "__main__":
+def entry(build: str = 'Release'):
     try:
         from main import main
 
-        return_code = main()
+        return_code = main(build)
         sys.exit(return_code)
     except Exception as error:
         base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -24,3 +24,8 @@ if __name__ == "__main__":
         write_message(log_path, f"Exception message: {error}\n")
         write_message(log_path, traceback.format_exc())
         sys.exit(1)
+    pass
+
+if __name__ == "__main__":
+    entry()
+    pass

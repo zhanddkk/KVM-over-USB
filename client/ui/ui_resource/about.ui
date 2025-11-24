@@ -15,57 +15,57 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_1">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_client_version_key">
+       <property name="text">
+        <string>Client version:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
       <widget class="QLabel" name="label_project_name_key">
        <property name="text">
         <string>Project name:</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLabel" name="label_project_name_value">
-       <property name="text">
-        <string notr="true">&lt;a href=&quot;https://github.com/wevsty/KVM-over-USB&quot;&gt;KVM-over-USB&lt;/a&gt;</string>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="label_project_description_value">
        <property name="text">
         <string>Project description:</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLabel" name="label_project_description_key">
-       <property name="text">
-        <string>A simple USB KVM solution</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
+     <item row="2" column="0">
       <widget class="QLabel" name="label_project_fork_from_key">
        <property name="text">
         <string>Project fork from:</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_python_version_key">
+       <property name="text">
+        <string>Python version:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_python_version_value">
+       <property name="text">
+        <string notr="true">3.12.0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_client_version_value">
+       <property name="text">
+        <string notr="true">v2024.10.10</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QLabel" name="label_project_fork_from_value">
        <property name="text">
         <string notr="true">&lt;a href=&quot;https://github.com/ElluIFX/KVM-Card-Mini-PySide6&quot;&gt;ElluIFX: KVM-Card-Mini-PySide6&lt;/a&gt;</string>
@@ -75,39 +75,29 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_client_version_key">
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_project_description_key">
        <property name="text">
-        <string>Client version:</string>
+        <string>A simple USB KVM solution</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLabel" name="label_client_version_value">
-       <property name="text">
-        <string notr="true">v2024.10.10</string>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_project_name_value">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_python_version_key">
        <property name="text">
-        <string>Python version:</string>
+        <string notr="true">&lt;a href=&quot;https://github.com/wevsty/KVM-over-USB&quot;&gt;KVM-over-USB&lt;/a&gt;</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_python_version_value">
-       <property name="text">
-        <string notr="true">3.12.0</string>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

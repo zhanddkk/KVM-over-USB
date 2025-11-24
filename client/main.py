@@ -528,7 +528,7 @@ class AppMainWindow(MainWindow):
     # 窗口标题
     WINDOW_TITLE: str = "USB KVM Client"
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(self, build: str, parent: QWidget | None = None):
         # 初始化父类
         super().__init__(parent)
 
@@ -585,7 +585,7 @@ class AppMainWindow(MainWindow):
         self.load_config()
 
         # 子窗口
-        self.about_dialog = AboutDialog()
+        self.about_dialog = AboutDialog(build)
         self.custom_key_dialog = CustomKeyDialog()
         self.indicator_lights_dialog = IndicatorLightsDialog()
         self.paste_board_dialog = PasteBoardDialog()
@@ -676,7 +676,8 @@ class AppMainWindow(MainWindow):
         # 启动自动连接
         self.auto_connect_on_startup()
 
-    def change_icon_color(self, file_name: str, color: QColor) -> QIcon:
+    @staticmethod
+    def change_icon_color(file_name: str, color: QColor) -> QIcon:
         # 加载原始图标
         pixmap = QPixmap(file_name)
 
@@ -2630,7 +2631,7 @@ def os_init():
         pass
 
 
-def main():
+def main(build: str):
     os_init()
     command_line_parser()
     argv = sys.argv
@@ -2648,7 +2649,7 @@ def main():
         translator = QTranslator(app)
         if translator.load(file_path):
             app.installTranslator(translator)
-    my_window = AppMainWindow()
+    my_window = AppMainWindow(build)
     my_window.show()
     # QTimer.singleShot(100, my_window.shortcut_status)
     clear_splash()
@@ -2656,5 +2657,5 @@ def main():
 
 
 if __name__ == "__main__":
-    exit_code: int = main()
+    exit_code: int = main('Debug')
     exit(exit_code)

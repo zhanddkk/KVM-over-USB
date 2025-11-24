@@ -50,6 +50,11 @@ class Ui_SettingsDialog(object):
 
         self.combo_box_device = QComboBox(self.tab_video)
         self.combo_box_device.setObjectName(u"combo_box_device")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.combo_box_device.sizePolicy().hasHeightForWidth())
+        self.combo_box_device.setSizePolicy(sizePolicy)
         self.combo_box_device.setMouseTracking(False)
 
         self.gridLayout.addWidget(self.combo_box_device, 0, 1, 1, 1)
@@ -80,6 +85,8 @@ class Ui_SettingsDialog(object):
 
         self.combo_box_audio_in_device = QComboBox(self.tab)
         self.combo_box_audio_in_device.setObjectName(u"combo_box_audio_in_device")
+        sizePolicy.setHeightForWidth(self.combo_box_audio_in_device.sizePolicy().hasHeightForWidth())
+        self.combo_box_audio_in_device.setSizePolicy(sizePolicy)
 
         self.gridLayout_3.addWidget(self.combo_box_audio_in_device, 0, 1, 1, 1)
 
@@ -108,6 +115,8 @@ class Ui_SettingsDialog(object):
         self.combo_box_controller_type.addItem(u"ch9329")
         self.combo_box_controller_type.addItem(u"kvm-card-mini")
         self.combo_box_controller_type.setObjectName(u"combo_box_controller_type")
+        sizePolicy.setHeightForWidth(self.combo_box_controller_type.sizePolicy().hasHeightForWidth())
+        self.combo_box_controller_type.setSizePolicy(sizePolicy)
 
         self.gridLayout_2.addWidget(self.combo_box_controller_type, 0, 1, 1, 1)
 

@@ -1,6 +1,7 @@
 import subprocess
 import shutil
 import os
+import sys
 import pathlib
 import datetime
 import time
@@ -48,7 +49,7 @@ class MakeOpt:
             pass
         _ret = subprocess.run(
             [
-                'python', '-m', 'nuitka',
+                sys.executable, '-m', 'nuitka',
                 '--standalone',
                 '--enable-plugin=pyside6',
                 '--company-name=Themovif',

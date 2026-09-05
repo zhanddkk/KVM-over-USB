@@ -95,6 +95,7 @@ from ui.ui_main import MainWindow
 from ui.ui_messagebox import MessageBox
 from ui.ui_paste_board import PasteBoardDialog
 from ui.ui_settings import SettingsDialog
+from video_widget import SmoothVideoWidget
 
 # 特定系统依赖
 if platform.system() == "Windows":
@@ -609,7 +610,8 @@ class AppMainWindow(MainWindow):
         self.status_bar_manager = MainWindowStatusBarManager(self.statusbar)
 
         # 初始化 video widget
-        self.video_widget: QVideoWidget | None = None
+        # self.video_widget: QVideoWidget | None = None
+        self.video_widget: SmoothVideoWidget | None = None
         self.video_disconnect_label = QLabel()
         self.init_video_widget()
 
@@ -1851,7 +1853,8 @@ class AppMainWindow(MainWindow):
 
     # 初始化 video widget
     def init_video_widget(self) -> None:
-        self.video_widget = QVideoWidget()
+        # self.video_widget = QVideoWidget()
+        self.video_widget = SmoothVideoWidget()
         self.video_widget.setAttribute(Qt.WidgetAttribute.WA_OpaquePaintEvent)
         self.takeCentralWidget()
         self.setCentralWidget(self.video_widget)
@@ -1898,11 +1901,9 @@ class AppMainWindow(MainWindow):
 
     # frame 改变
     def video_widget_frame_changed(self, frame: QVideoFrame) -> None:
-        self.video_widget.isWindow()
         video_slink = self.video_widget.videoSink()
         video_slink.setVideoFrame(frame)
-        self.video_widget.update()
-        self.video_widget.repaint()
+        pass
 
     # 判断屏幕大小是否足够
     @staticmethod
@@ -1990,10 +1991,12 @@ class AppMainWindow(MainWindow):
             self.video_widget.setAspectRatioMode(
                 Qt.AspectRatioMode.KeepAspectRatio
             )
+            pass
         else:
             self.video_widget.setAspectRatioMode(
                 Qt.AspectRatioMode.IgnoreAspectRatio
             )
+            pass
 
     ######################################################################
     # 视频设备相关函数

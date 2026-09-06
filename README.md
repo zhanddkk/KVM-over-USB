@@ -64,7 +64,7 @@ CH340 驱动程序下载地址： https://www.wch.cn/downloads/CH341SER_EXE.html
 
 安装成功后可通过设备管理器查看串口端口号。 
 
-![image](https://github.com/wevsty/KVM-over-USB/blob/main/document/device_manager_port.png)
+![image](document/device_manager_port.png)
 
 如果您使用的是 KVM-Card-Mini 系列硬件，连接到电脑后无需安装任何驱动可即插即用。
 
@@ -72,7 +72,7 @@ CH340 驱动程序下载地址： https://www.wch.cn/downloads/CH341SER_EXE.html
 
 选择设备菜单 -> 设置 -> 选择视频摄像头以及控制器 -> 确定。 
 
-![image](https://github.com/wevsty/KVM-over-USB/blob/main/document/settings.png)
+![image](document/settings.png)
 
 设定完毕后可以使用 设备菜单 -> 连接 进行连接。 
 
@@ -106,11 +106,11 @@ udevadm trigger
 
 演示控制ASUS BIOS 
 
-![image](https://github.com/wevsty/KVM-over-USB/blob/main/document/demo_control_bios.gif)
+![image](document/demo_control_bios.gif)
 
 演示自动输入功能 
 
-![image](https://github.com/wevsty/KVM-over-USB/blob/main/document/demo_fast_input.gif)
+![image](document/demo_fast_input.gif)
 
 ### FAQ
 
